@@ -9,7 +9,7 @@ let html_script = `
 if(typeof _frames === 'undefined') {
   let _frames = document.getElementsByTagName('iframe');
     if (_frames.length===5) {
-      _frames[2].contentDocument.body.innerHTML = ${parecer_html}
+      _frames[2].contentDocument.body.innerHTML = '${parecer_html}'
     }
   } 
 `;
@@ -32,7 +32,7 @@ function sendHTML(event, html) {
 if(typeof _frames === 'undefined') {
   let _frames = document.getElementsByTagName('iframe');
     if (_frames.length===5) {
-      _frames[2].contentDocument.body.innerHTML = ${parecer_html}
+      _frames[2].contentDocument.body.innerHTML = '${parecer_html}'
     }
   } 
 `
@@ -92,8 +92,6 @@ function createWindow() {
     ]
   }
 
-
-
   let item = new MenuItem(template)
   menu.append(item)
   Menu.setApplicationMenu(menu);
@@ -110,20 +108,20 @@ function createWindow() {
       let isEditable = await bw.webContents.executeJavaScript(`document.querySelector('#ifrEditorSalvar') !== null`)
         .then((result) => {
           return result
-        }).then(result => {
-          // verifica se a tela tem o id ifrEditorSalvar
-          if (result) {
-
-            try {
-              bw.
-                webContents.
-                executeJavaScript(html_script)
-            } catch (err) {
-              console.log(err)
-            }
-
-          }
         })
+
+      if (isEditable) {
+
+        try {
+          await bw.
+            webContents.
+            executeJavaScript(html_script)
+        } catch (err) {
+          console.log(err)
+        }
+
+      }
+
     }
 
   })
