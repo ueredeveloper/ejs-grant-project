@@ -8,7 +8,7 @@ let parecer_html = `<p>editable area</p>`
 let html_script = `
 if(typeof _frames === 'undefined') {
   let _frames = document.getElementsByTagName('iframe');
-    if (_frames.length===5) {
+    if (_frames.length>=5) {
       _frames[2].contentDocument.body.innerHTML = '${parecer_html}'
     }
   } 
@@ -31,7 +31,7 @@ function sendHTML(event, html) {
   html_script = `
 if(typeof _frames === 'undefined') {
   let _frames = document.getElementsByTagName('iframe');
-    if (_frames.length===5) {
+    if (_frames.length>=5) {
       _frames[2].contentDocument.body.innerHTML = '${parecer_html}'
     }
   } 
@@ -65,7 +65,7 @@ function createWindow() {
       {
         label: "Sei", click: () => {
           try {
-            win.loadURL('https://treinamento3.sei.df.gov.br/sip/login.php?sigla_orgao_sistema=GDF&sigla_sistema=SEI')
+            win.loadURL('https://sei.df.gov.br/sip/login.php?sigla_orgao_sistema=GDF&sigla_sistema=SEI')
           } catch (err) {
             console.log(err)
           }
