@@ -3,40 +3,40 @@ const { MenuItem } = require('electron/main');
 const { endianness } = require('os');
 const path = require('path')
 
-let i = 0;
 let parecer_html = `<p>editable area</p>`
-let html_script = `
-if(typeof _frames === 'undefined') {
-  let _frames = document.getElementsByTagName('iframe');
-    if (_frames.length>=5) {
-      _frames[2].contentDocument.body.innerHTML = '${parecer_html}'
-    }
-  } 
-`;
 
+/**
+ * Esta função gera uma string de código JavaScript executável.
+ * Ela recebe uma string HTML como parâmetro e a usa para modificar o corpo
+ * do terceiro elemento iframe na página, caso haja pelo menos 5 elementos iframe o iframe é editável.
+ *
+ * @param {string} html - A string HTML para inserir no corpo do iframe.
+ * @returns {string} O código JavaScript gerado como uma string.
+ */
+const excecutableJavascript = (html) => {
+  return `
+    if(typeof _frames === 'undefined') {
+      let _frames = document.getElementsByTagName('iframe');
+        if (_frames.length>=5) {
+          _frames[2].contentDocument.body.innerHTML = '${html}'
+        }
+      } 
+  `
+};
+
+/**
+ * Esta função responde a um evento de usuário enviando uma mensagem de resposta
+ * contendo a mensagem "Usuario recebido" e incrementando um contador interno.
+ *
+ * @param {object} event - O objeto que representa o evento do usuário.
+ * @param {object} user - O objeto que representa o usuário que enviou o evento.
+ */
 function sendUser(event, user) {
-
-  /*
-  const webContents = event.sender
-  const win = BrowserWindow.fromWebContents(webContents)
-  win.setTitle(title)*/
-  console.log('main sendUser', user)
-  event.reply('reply', 'Usuario recebido' + i++);
+  event.reply('reply', 'Usuario recebido');
 }
 
 function sendHTML(event, html) {
-
-
   parecer_html = html;
-  html_script = `
-if(typeof _frames === 'undefined') {
-  let _frames = document.getElementsByTagName('iframe');
-    if (_frames.length>=5) {
-      _frames[2].contentDocument.body.innerHTML = '${parecer_html}'
-    }
-  } 
-`
-  console.log('main sendHTML', html)
 }
 
 function createWindow() {
@@ -49,8 +49,7 @@ function createWindow() {
     }
 
   })
-  //win.loadFile('index.html');
-  //win.loadURL('http://localhost:3000');
+
   if (app.isPackaged) {
     win.loadFile('index.html'); // prod
   } else {
@@ -65,7 +64,8 @@ function createWindow() {
       {
         label: "Sei", click: () => {
           try {
-            win.loadURL('https://sei.df.gov.br/sip/login.php?sigla_orgao_sistema=GDF&sigla_sistema=SEI')
+            //win.loadURL('https://sei.df.gov.br/sip/login.php?sigla_orgao_sistema=GDF&sigla_sistema=SEI')
+            win.loadURL('https://treinamento3.sei.df.gov.br/sip/login.php?sigla_orgao_sistema=GDF&sigla_sistema=SEI')
           } catch (err) {
             console.log(err)
           }
@@ -115,7 +115,7 @@ function createWindow() {
         try {
           await bw.
             webContents.
-            executeJavaScript(html_script)
+            executeJavaScript(excecutableJavascript(parecer_html))
         } catch (err) {
           console.log(err)
         }
